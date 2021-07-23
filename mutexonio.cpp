@@ -1,17 +1,25 @@
-/**
- * A small example to apply c++ mutexes to synchronize io from multiple threads.
- *
- * Run command: g++ --std=c++0x -pthread thread_try1.cc ; ./a.out
- */
-#include <iostream>
-#include <string>
-#include <thread>
 #include <mutex>
+#include <queue>
 
-using std::mutex;
-using std::unique_lock;
+using namespace std;
 
 mutex io_mutex;
+
+class Message {
+ 
+ private:
+  string msg;
+
+ public:
+
+  Message(string message) {
+    msg = message;
+  }
+
+  void print() {
+    cout << "Message: " << msg << endl;
+  }
+};
 
 void print() {
   unique_lock<mutex> lck {io_mutex}; // acquire mutex
@@ -27,6 +35,16 @@ class functor {
 };
 
 
+void print_queue(queue<Message> q) {
+  cout << "Queue contents" << endl;
+
+  while (!q.empty()) {
+    Message m = q.front();
+    m.print();
+    q.pop();
+  }
+}
+
 int main()
 {
   // thread using function pointer
@@ -41,4 +59,15 @@ int main()
 
   std::cout << "Thread hardware concurrency : "
             <<  std::thread::hardware_concurrency() << std::endl;
+
+  // Create a shared message queue for producer consumer
+  Message m1("first");
+  Message m2("second");
+
+  queue<Message> message_queue;
+
+  message_queue.push(m1);
+  message_queue.push(m2);
+
+  print_queue(message_queue);
 }
