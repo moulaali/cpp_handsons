@@ -1,5 +1,7 @@
 /**
  * A small example to apply c++ mutexes to synchronize io from multiple threads.
+ *
+ * Run command: g++ --std=c++0x -pthread thread_try1.cc ; ./a.out
  */
 #include <iostream>
 #include <string>
